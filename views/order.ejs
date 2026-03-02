@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Order | VulnLab</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+    <div class="container">
+
+        <div class="navbar">
+            <h1>VulnLab</h1>
+            <div class="navbar-links">
+                <a href="/dashboard">Dashboard</a>
+                <a href="/learn">📚 Learn</a>
+                <a href="/auth/logout">Logout</a>
+            </div>
+        </div>
+
+        <% if (vulnerable) { %>
+            <div class="warning">
+                ⚠ <strong>IDOR Vulnerability Active</strong> — No ownership check is being performed on this route.
+            </div>
+            <% } else { %>
+                <div class="success">
+                    ✅ <strong>Secure Route</strong> — Ownership was verified before returning this data.
+                </div>
+                <% } %>
+
+                    <h2>Order Details</h2>
+
+                    <div class="order-card">
+                        <p><strong>Order ID</strong> #<%= order.id %>
+                        </p>
+                        <p><strong>Item</strong>
+                            <%= order.item_name %>
+                        </p>
+                        <p><strong>Price</strong> $<%= order.price %>
+                        </p>
+                        <p><strong>Owner ID</strong> User #<%= order.user_id %>
+                        </p>
+                        <p><strong>Your Session ID</strong> User #<%= session_user_id %>
+                        </p>
+                    </div>
+
+                    <% if (order.user_id !==session_user_id) { %>
+                        <div class="danger">
+                            🚨 <strong>Data Exposed!</strong> — This order belongs to User #<%= order.user_id %>
+                                but you are User #<%= session_user_id %>. This is a successful IDOR attack!
+                        </div>
+                        <% } %>
+
+                            <hr class="divider" />
+                            <a href="/dashboard">← Back to Dashboard</a>
+                            &nbsp;&nbsp;
+                            <a href="/learn">📚 Learn about IDOR</a>
+
+                            <div class="footer">⚠ VulnLab — For educational purposes only</div>
+    </div>
+</body>
+
+</html>

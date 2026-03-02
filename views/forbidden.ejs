@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Forbidden | VulnLab</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+    <div class="container">
+
+        <div class="navbar">
+            <h1>VulnLab</h1>
+            <div class="navbar-links">
+                <a href="/dashboard">Dashboard</a>
+                <a href="/learn">📚 Learn</a>
+                <a href="/auth/logout">Logout</a>
+            </div>
+        </div>
+
+        <div class="danger">
+            <h2>🚫 403 — Forbidden</h2>
+            <p>You tried to access Order #<%= order_id %>
+            </p>
+            <p>That order belongs to User #<%= order_owner %>
+            </p>
+            <p>You are User #<%= session_user %>
+            </p>
+            <br />
+            <p>The secure route <strong>caught and blocked this attack!</strong></p>
+        </div>
+
+        <div class="learn-card">
+            <h3>What just happened?</h3>
+            <p>The secure route ran this check:</p>
+            <div class="code-block">
+                <p>if (order.user_id !== req.session.user_id) {"{"}</p>
+                <p>&nbsp;&nbsp;return res.status(403).render('forbidden');</p>
+                <p>{"}"}</p>
+            </div>
+            <br />
+            <p>This returned <strong>true</strong> — you don't own this order — so the server blocked access instead of
+                leaking data.</p>
+        </div>
+
+        <div class="learn-card">
+            <h3>Vulnerable vs Secure</h3>
+            <p>🔴 <code>/orders/<%= order_id %></code> → leaks data to anyone</p>
+            <p>🟢 <code>/secure/orders/<%= order_id %></code> → blocked unauthorized access</p>
+        </div>
+
+        <hr class="divider" />
+        <a href="/dashboard">← Back to Dashboard</a>
+        &nbsp;&nbsp;
+        <a href="/learn">📚 Learn about IDOR</a>
+
+        <div class="footer">⚠ VulnLab — For educational purposes only</div>
+    </div>
+</body>
+
+</html>

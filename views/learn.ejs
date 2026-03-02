@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Learn IDOR | VulnLab</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>🔐 VulnLab</h1>
+        <h2>📚 Understanding IDOR</h2>
+
+        <!-- ─── What is IDOR ─────────────────────────────── -->
+        <div class="learn-card">
+            <h3>What is IDOR?</h3>
+            <p>
+                <strong>Insecure Direct Object Reference (IDOR)</strong> is a vulnerability that occurs
+                when an application exposes internal object references (like database IDs) without
+                verifying if the requesting user has permission to access that object.
+            </p>
+        </div>
+
+        <!-- ─── Root Cause ───────────────────────────────── -->
+        <div class="learn-card">
+            <h3>Root Cause</h3>
+            <p>The server only asks <strong>"Does this order exist?"</strong> but never asks <strong>"Does this order
+                    belong to YOU?"</strong></p>
+            <div class="code-block">
+                <p>// ❌ Vulnerable Code</p>
+                <p>const order = db.prepare('SELECT * FROM orders WHERE id = ?').get(orderId);</p>
+                <p>res.render('order', { order });</p>
+                <br />
+                <p>// ✅ Secure Code</p>
+                <p>if (order.user_id !== req.session.user_id) {"{"} </p>
+                <p>&nbsp;&nbsp;return res.status(403).send('Forbidden');</p>
+                <p>{"}"}</p>
+            </div>
+        </div>
+
+        <!-- ─── Authentication vs Authorization ─────────── -->
+        <div class="learn-card">
+            <h3>Authentication vs Authorization</h3>
+            <p><strong>Authentication</strong> — Verifies WHO you are. (Login system)</p>
+            <p><strong>Authorization</strong> — Verifies WHAT you are allowed to access.</p>
+            <br />
+            <p>IDOR is an <strong>authorization failure</strong> — the app knows who you are but doesn't check what you
+                can access.</p>
+        </div>
+
+        <!-- ─── Exploit Steps ────────────────────────────── -->
+        <div class="learn-card">
+            <h3>How to Exploit IDOR in this Lab</h3>
+            <p>1. Login as <strong>alice</strong> / alice123</p>
+            <p>2. View your own order at <code>/orders/1</code></p>
+            <p>3. Change the URL to <code>/orders/4</code></p>
+            <p>4. You can now see Bob's order — data breach!</p>
+        </div>
+
+        <!-- ─── Real World Impact ────────────────────────── -->
+        <div class="learn-card">
+            <h3>Real World Impact</h3>
+            <p>IDOR vulnerabilities have been found in major platforms:</p>
+            <br />
+            <p>🔴 <strong>Facebook</strong> — Researcher could delete anyone's photos by changing photo ID</p>
+            <p>🔴 <strong>Uber</strong> — Changing user ID in API exposed trip history and personal data</p>
+            <p>🔴 <strong>Banking Apps</strong> — Changing account ID exposed other users' bank statements</p>
+        </div>
+
+        <!-- ─── The Fix ───────────────────────────────────── -->
+        <div class="learn-card">
+            <h3>The Fix</h3>
+            <p>Always verify ownership before returning any object:</p>
+            <div class="code-block">
+                <p>const order = db.prepare('SELECT * FROM orders WHERE id = ?').get(orderId);</p>
+                <br />
+                <p>// Always add this check!</p>
+                <p>if (order.user_id !== req.session.user_id) {"{"} </p>
+                <p>&nbsp;&nbsp;return res.status(403).send('Forbidden');</p>
+                <p>{"}"}</p>
+            </div>
+        </div>
+
+        <br />
+        <a href="/dashboard">← Back to Dashboard</a>
+    </div>
+</body>
+
+</html>

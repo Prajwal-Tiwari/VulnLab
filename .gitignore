@@ -1,0 +1,4 @@
+node_modules/
+db/vulnlab.db
+npm-debug.log
+.env

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Login | VulnLab</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>VulnLab</h1>
+        <p style="color:#555; margin-bottom:30px; font-size:0.85rem;">// security research & education platform</p>
+
+        <h2>Login</h2>
+
+        <% if (error) { %>
+            <p class="error">⚠ <%= error %>
+            </p>
+            <% } %>
+
+                <form method="POST" action="/auth/login">
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" name="username" placeholder="enter username" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" name="password" placeholder="enter password" required />
+                    </div>
+                    <button type="submit">[ LOGIN ]</button>
+                </form>
+
+                <hr class="divider" />
+                <p style="color:#555; font-size:0.85rem;">
+                    No account? <a href="/auth/register">Register here</a>
+                </p>
+
+                <div class="footer">⚠ For educational purposes only</div>
+    </div>
+</body>
+
+</html>

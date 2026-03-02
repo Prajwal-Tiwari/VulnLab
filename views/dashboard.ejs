@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard | VulnLab</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+    <div class="container">
+
+        <div class="navbar">
+            <h1>VulnLab</h1>
+            <div class="navbar-links">
+                <a href="/learn">📚 Learn IDOR</a>
+                <a href="/auth/logout">Logout</a>
+            </div>
+        </div>
+
+        <h2>Welcome back, <%= username %> <span class="cursor"></span></h2>
+        <p style="color:#555; font-size:0.85rem; margin-bottom:25px;">// session active — user_id linked to your orders
+            below</p>
+
+        <div class="warning">
+            ⚠ <strong>Vulnerability Active:</strong> Try clicking 🔴 Vulnerable on any order, then manually change the
+            ID in the URL to access another user's data.
+        </div>
+
+        <h3>📦 My Orders</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Item</th>
+                    <th>Price</th>
+                    <th>View</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% orders.forEach(order=> { %>
+                    <tr>
+                        <td>#<%= order.id %>
+                        </td>
+                        <td>
+                            <%= order.item_name %>
+                        </td>
+                        <td>$<%= order.price %>
+                        </td>
+                        <td>
+                            <a href="/orders/<%= order.id %>"><span class="badge badge-red">🔴 Vulnerable</span></a>
+                            &nbsp;
+                            <a href="/secure/orders/<%= order.id %>"><span class="badge badge-green">🟢
+                                    Secure</span></a>
+                        </td>
+                    </tr>
+                    <% }) %>
+            </tbody>
+        </table>
+
+        <div class="footer">⚠ VulnLab — For educational purposes only</div>
+    </div>
+</body>
+
+</html>
