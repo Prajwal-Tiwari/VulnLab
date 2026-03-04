@@ -1,4 +1,8 @@
 #  VulnLab — Stage 1: IDOR Vulnerability Lab
+![Node.js](https://img.shields.io/badge/Node.js-Backend-green)
+![Express](https://img.shields.io/badge/Express.js-Web_Framework-lightgrey)
+![Security Lab](https://img.shields.io/badge/Web_Security-IDOR_Lab-red)
+![License](https://img.shields.io/badge/License-MIT-blue)
 
 A deliberately vulnerable web application built for learning and understanding 
 Insecure Direct Object Reference (IDOR) — one of the most common and impactful 
@@ -156,6 +160,22 @@ After going through this lab you should understand:
 - Difficulty modes
 - Scoreboard
 - Real-world misconfiguration labs
+
+---
+## Want to Contribute?
+
+If you're interested in web security education or backend development,
+contributions are welcome.
+
+Good first contributions could include:
+
+- Adding new vulnerability labs (XSS, CSRF, SSRF)
+- Improving the learning explanations
+- Adding tests or logging
+- UI improvements
+- Writing security documentation
+
+Look for issues labeled **good first issue**.
 
 ---
 
