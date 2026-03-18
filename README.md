@@ -65,7 +65,7 @@ One missing authorization check can lead to **complete data exposure**.
 Make sure Node.js is installed.
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/VulnLab.git
+git clone https://github.com/Prajwal-Tiwari/VulnLab.git
 cd VulnLab
 npm install
 npm run dev
@@ -84,7 +84,7 @@ http://localhost:3000
 Ensure Docker Desktop is running.
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/VulnLab.git
+git clone https://github.com/Prajwal-Tiwari/VulnLab.git
 cd VulnLab
 docker build -t vulnlab .
 docker run -p 3000:3000 vulnlab
