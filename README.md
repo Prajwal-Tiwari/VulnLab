@@ -58,6 +58,55 @@ One missing authorization check can lead to **complete data exposure**.
 
 ---
 
+## Prerequisites
+
+Before running VulnLab, make sure you have the following installed on your machine:
+
+### 1. Node.js (Required)
+
+VulnLab runs on Node.js. You must install it before anything else.
+
+**How to install:**
+1. Go to https://nodejs.org
+2. Download the **LTS version** (recommended)
+3. Run the installer and follow the steps
+4. Make sure to check **"Add to PATH"** during installation
+
+**Verify installation:**
+Open a new terminal and run:
+```cmd
+node -v
+npm -v
+```
+You should see version numbers like `v20.x.x` and `10.x.x`.
+If you see `npm is not recognized` — Node.js is either not installed 
+or not added to PATH. Reinstall and make sure to check "Add to PATH".
+
+### 2. Git (Required)
+
+To clone the repository you need Git installed.
+
+**How to install:**
+1. Go to https://git-scm.com/downloads
+2. Download and install for your OS
+3. Verify: `git --version`
+
+### 3. Docker (Optional)
+
+Only needed if you want to run VulnLab inside a container.
+
+**How to install:**
+1. Go to https://www.docker.com/products/docker-desktop
+2. Download Docker Desktop for your OS
+3. Run the installer
+4. Verify: `docker --version`
+
+> ⚠️ On Windows, after installing Node.js always open a **fresh terminal** 
+> before running npm commands. Old terminals won't recognize npm even after 
+> installation.
+
+---
+
 ## Setup & Installation
 
 ### Option 1 — Run with Node.js
