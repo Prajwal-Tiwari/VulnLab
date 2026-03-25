@@ -2,13 +2,13 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db/database');
 
-// ─── GET /auth/register ───────────────────────────────────
+//GET /auth/register
 // Shows the register page
 router.get('/register', (req, res) => {
   res.render('register', { error: null });
 });
 
-// ─── POST /auth/register ──────────────────────────────────
+// POST /auth/register
 // Handles registration form submission
 router.post('/register', (req, res) => {
   const { username, password } = req.body;
@@ -27,13 +27,13 @@ router.post('/register', (req, res) => {
   res.redirect('/auth/login');
 });
 
-// ─── GET /auth/login ──────────────────────────────────────
+//  GET /auth/login
 // Shows the login page
 router.get('/login', (req, res) => {
   res.render('login', { error: null });
 });
 
-// ─── POST /auth/login ─────────────────────────────────────
+//  POST /auth/login 
 // Handles login form submission
 router.post('/login', (req, res) => {
   const { username, password } = req.body;
@@ -53,7 +53,7 @@ router.post('/login', (req, res) => {
   res.redirect('/dashboard');
 });
 
-// ─── GET /auth/logout ─────────────────────────────────────
+//  GET /auth/logout
 // Logs the user out by destroying session
 router.get('/logout', (req, res) => {
   req.session.destroy();
