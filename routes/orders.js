@@ -21,12 +21,12 @@ router.get('/dashboard', isLoggedIn, (req, res) => {
     });
 });
 
-// ─── GET /learn ───────────────────────────────────────────
+//GET /learn
 router.get('/learn', isLoggedIn, (req, res) => {
   res.render('learn');
 });
 
-// ─── GET /orders/:id (VULNERABLE) ────────────────────────
+// GET /orders/:id (VULNERABLE)
 router.get('/orders/:id', isLoggedIn, (req, res) => {
   const orderId = req.params.id;
 
