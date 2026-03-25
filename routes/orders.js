@@ -30,7 +30,7 @@ router.get('/learn', isLoggedIn, (req, res) => {
 router.get('/orders/:id', isLoggedIn, (req, res) => {
   const orderId = req.params.id;
 
-  // ⚠️ VULNERABLE CODE — fetches order by ID only
+  // VULNERABLE CODE — fetches order by ID only
   // Does NOT check if this order belongs to the logged in user
   const order = db.prepare('SELECT * FROM orders WHERE id = ?').get(orderId);
 
