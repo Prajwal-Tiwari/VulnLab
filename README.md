@@ -1,32 +1,42 @@
-#  VulnLab — Stage 1: IDOR Vulnerability Lab
+# 🧪 VulnLab — IDOR Vulnerability Lab
 
-A deliberately vulnerable web application built for learning and understanding 
-Insecure Direct Object Reference (IDOR) — one of the most common and impactful 
-web security vulnerabilities.
+![Node.js](https://img.shields.io/badge/Node.js-Backend-green)
+![Express](https://img.shields.io/badge/Express.js-Web_Framework-lightgrey)
+![Security Lab](https://img.shields.io/badge/Web_Security-IDOR_Lab-red)
+![License](https://img.shields.io/badge/License-MIT-blue)
 
-> ⚠️ This app is **intentionally insecure**. Run it only in a local or controlled 
-> environment. Never deploy it publicly.
+A deliberately vulnerable web application built to demonstrate and study **Insecure Direct Object Reference (IDOR)** — one of the most common and impactful web security vulnerabilities.
+
+> ⚠️ This application is intentionally insecure. Run it only in a **local or controlled environment**. Never deploy it publicly.
+
+Current Version: **v1.0**
 
 ---
 
-## What is this?
+## What is VulnLab?
 
-VulnLab is a hands-on security education lab. It simulates a real-world IDOR 
-vulnerability in a simple e-commerce order system. You can see the vulnerability 
-in action, understand why it happens, and see exactly how to fix it — all in one place.
+VulnLab is a **hands-on web security learning lab** designed to demonstrate how vulnerabilities appear in backend systems.
 
-This isn't a CTF challenge. It's a controlled learning environment designed to show 
-the full lifecycle: exploit → impact → fix.
+It simulates a simple e-commerce order system with an **IDOR vulnerability** so learners can:
+
+- observe the vulnerability
+- exploit it
+- understand the impact
+- see the correct fix
+
+This project is **not a CTF challenge**.  
+It is designed as a **controlled learning environment** that demonstrates the full lifecycle:
+
+**exploit → impact → fix**
 
 ---
 
 ## The Vulnerability
 
-IDOR (Insecure Direct Object Reference) happens when a server exposes internal 
-object IDs (like database IDs) without checking if the requesting user actually 
-owns that object.
+IDOR (Insecure Direct Object Reference) occurs when an application exposes internal object identifiers (like database IDs) without verifying that the requesting user actually owns the resource.
 
-In this app, the vulnerable route looks like this:
+Example vulnerable route:
+
 ```javascript
 // ❌ Vulnerable — no ownership check
 app.get('/orders/:id', (req, res) => {
@@ -35,7 +45,8 @@ app.get('/orders/:id', (req, res) => {
 });
 ```
 
-The fix is just one check:
+Secure version:
+
 ```javascript
 // ✅ Secure — ownership verified
 if (order.user_id !== req.session.user_id) {
@@ -43,39 +54,102 @@ if (order.user_id !== req.session.user_id) {
 }
 ```
 
+One missing authorization check can lead to **complete data exposure**.
+
+---
+
+## Prerequisites
+
+Before running VulnLab, make sure you have the following installed on your machine:
+
+### 1. Node.js (Required)
+
+VulnLab runs on Node.js. You must install it before anything else.
+
+**How to install:**
+1. Go to https://nodejs.org
+2. Download the **LTS version** (recommended)
+3. Run the installer and follow the steps
+4. Make sure to check **"Add to PATH"** during installation
+
+**Verify installation:**
+Open a new terminal and run:
+```cmd
+node -v
+npm -v
+```
+You should see version numbers like `v20.x.x` and `10.x.x`.
+If you see `npm is not recognized` — Node.js is either not installed 
+or not added to PATH. Reinstall and make sure to check "Add to PATH".
+
+### 2. Git (Required)
+
+To clone the repository you need Git installed.
+
+**How to install:**
+1. Go to https://git-scm.com/downloads
+2. Download and install for your OS
+3. Verify: `git --version`
+
+### 3. Docker (Optional)
+
+Only needed if you want to run VulnLab inside a container.
+
+**How to install:**
+1. Go to https://www.docker.com/products/docker-desktop
+2. Download Docker Desktop for your OS
+3. Run the installer
+4. Verify: `docker --version`
+
+> ⚠️ On Windows, after installing Node.js always open a **fresh terminal** 
+> before running npm commands. Old terminals won't recognize npm even after 
+> installation.
+
 ---
 
 ## Setup & Installation
 
-### Option 1 — Run with Node.js directly
+### Option 1 — Run with Node.js
 
-Make sure you have Node.js installed, then:
+Make sure Node.js is installed.
+
 ```bash
-git clone https://github.com/YOUR_USERNAME/VulnLab.git
+git clone https://github.com/Prajwal-Tiwari/VulnLab.git
 cd VulnLab
 npm install
 npm run dev
 ```
 
-Visit `http://localhost:3000`
+Open:
+
+```
+http://localhost:3000
+```
+
+---
 
 ### Option 2 — Run with Docker
 
-Make sure Docker Desktop is running, then:
+Ensure Docker Desktop is running.
+
 ```bash
-git clone https://github.com/YOUR_USERNAME/VulnLab.git
+git clone https://github.com/Prajwal-Tiwari/VulnLab.git
 cd VulnLab
 docker build -t vulnlab .
 docker run -p 3000:3000 vulnlab
 ```
 
-Visit `http://localhost:3000`
+Open:
+
+```
+http://localhost:3000
+```
 
 ---
 
 ## Test Accounts
 
-The database comes pre-seeded with two users:
+The database comes pre-seeded with two users.
 
 | Username | Password |
 |----------|----------|
@@ -86,32 +160,36 @@ The database comes pre-seeded with two users:
 
 ## How to Exploit IDOR in this Lab
 
-1. Login as `alice` / `alice123`
-2. You'll see Alice's orders on the dashboard
+1. Login as `alice / alice123`
+2. View Alice's orders on the dashboard
 3. Click any order — it opens at `/orders/1`
-4. Manually change the URL to `/orders/4`
-5. You're now viewing Bob's order even though you're logged in as Alice
-6. The page will show a 🚨 banner explaining the data breach
+4. Change the URL manually to `/orders/4`
+5. You will now see **Bob's order**
+
+The application will display a 🚨 banner explaining the data breach.
 
 ---
 
-## How to See the Fix
+## How to See the Secure Fix
 
-1. Go back to the dashboard
+1. Return to the dashboard
 2. Click **🟢 Secure** on any order
-3. Try changing the URL to `/secure/orders/4`
-4. You'll get a **403 Forbidden** page — attack blocked!
+3. Change the order ID again
+4. The server will return **403 Forbidden**
+
+Attack blocked.
 
 ---
 
 ## Project Structure
+
 ```
 vulnlab/
 ├── db/
-│   └── database.js        ← database connection & seed data
+│   └── database.js
 ├── routes/
-│   ├── auth.js            ← login, register, logout
-│   └── orders.js          ← dashboard, vulnerable & secure routes
+│   ├── auth.js
+│   └── orders.js
 ├── views/
 │   ├── login.ejs
 │   ├── register.ejs
@@ -130,39 +208,82 @@ vulnlab/
 
 ## Tech Stack
 
-- **Backend** — Node.js + Express.js
-- **Database** — SQLite via better-sqlite3
-- **Authentication** — express-session (session-based, no JWT)
-- **Frontend** — EJS templates + vanilla CSS
-- **Container** — Docker
+Backend
+- Node.js
+- Express.js
+
+Database
+- SQLite (better-sqlite3)
+
+Authentication
+- express-session (session-based authentication)
+
+Frontend
+- EJS templates
+- Vanilla CSS
+
+Containerization
+- Docker
 
 ---
 
 ## Learning Outcomes
 
-After going through this lab you should understand:
+After completing this lab you should understand:
 
-- What IDOR is and why it happens
-- The difference between authentication and authorization
-- How sequential IDs make IDOR easier to exploit
-- How one missing check can cause a full data breach
-- How to properly implement object-level authorization
+- What **IDOR vulnerabilities** are
+- Why **authentication ≠ authorization**
+- How predictable IDs enable attacks
+- How missing authorization checks cause data breaches
+- How to implement **object-level authorization**
 
 ---
 
-## What's Next — Stage 2 (Coming Soon)
+## Roadmap
 
-- More vulnerability types
+VulnLab will evolve into a broader web security learning platform.
+
+Future plans include:
+
 - Difficulty modes
-- Scoreboard
-- Real-world misconfiguration labs
+- XSS vulnerability labs
+- CSRF vulnerability labs
+- API authorization flaws
+- Security misconfiguration scenarios
+- Advanced backend attack chains
+
+---
+
+## Changelog
+
+See version history in:
+
+```
+CHANGELOG.md
+```
+
+---
+
+## Want to Contribute?
+
+Contributions are welcome.
+
+If you're interested in **web security education or backend development**, you can help by:
+
+- Adding new vulnerability labs
+- Improving vulnerability explanations
+- Writing documentation
+- Enhancing UI
+- Adding logging or tests
+
+Look for issues labeled **good first issue**.
 
 ---
 
 ## Ethical Disclaimer
 
-This application is **intentionally vulnerable** and is designed strictly for 
-educational purposes in controlled environments. Do not use techniques learned 
-here against systems you don't own or have explicit permission to test.
+This application contains **intentional vulnerabilities** and is designed strictly for educational purposes in controlled environments.
+
+Do **not** use the techniques demonstrated here against systems you do not own or have explicit permission to test.
 
 The developer is not responsible for any misuse of this project.
