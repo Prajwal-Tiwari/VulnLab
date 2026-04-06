@@ -12,9 +12,19 @@
 
         <div class="navbar">
             <h1>VulnLab</h1>
-            <div class="navbar-links">
-                <a href="/learn">📚 Learn IDOR</a>
-                <a href="/auth/logout">Logout</a>
+            <div style="display:flex; align-items:center; gap:15px;">
+                <% if (difficulty==='low' ) { %>
+                    <span class="badge badge-red">🔴 Low</span>
+                    <% } else if (difficulty==='medium' ) { %>
+                        <span class="badge badge-yellow">🟡 Medium</span>
+                        <% } else { %>
+                            <span class="badge badge-green">🟢 High</span>
+                            <% } %>
+                                <div class="navbar-links">
+                                    <a href="/settings">⚙️ Settings</a>
+                                    <a href="/learn">📚 Learn</a>
+                                    <a href="/auth/logout">Logout</a>
+                                </div>
             </div>
         </div>
 
@@ -48,10 +58,19 @@
                         <td>$<%= order.price %>
                         </td>
                         <td>
-                            <a href="/orders/<%= order.id %>"><span class="badge badge-red">🔴 Vulnerable</span></a>
-                            &nbsp;
-                            <a href="/secure/orders/<%= order.id %>"><span class="badge badge-green">🟢
-                                    Secure</span></a>
+                            <% if (difficulty==='low' ) { %>
+                                <a href="/orders/<%= order.id %>">
+                                    <span class="badge badge-red">🔴 View Order</span>
+                                </a>
+                                <% } else if (difficulty==='medium' ) { %>
+                                    <a href="/orders/<%= Buffer.from(String(order.id)).toString('base64') %>">
+                                        <span class="badge badge-yellow">🟡 View Order</span>
+                                    </a>
+                                    <% } else { %>
+                                        <a href="/orders/<%= order.uuid %>">
+                                            <span class="badge badge-green">🟢 View Order</span>
+                                        </a>
+                                        <% } %>
                         </td>
                     </tr>
                     <% }) %>

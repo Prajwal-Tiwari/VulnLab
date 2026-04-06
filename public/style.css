@@ -390,3 +390,102 @@ code {
     color: #444;
     font-size: 0.8rem;
 }
+
+/* ─── Difficulty Cards ───────────────────────────────────── */
+.difficulty-card {
+    background-color: #0f0f0f;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    padding: 25px;
+    margin: 20px 0;
+    transition: all 0.3s ease;
+}
+
+.difficulty-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
+}
+
+.difficulty-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.active-low {
+    border-color: #ff4d4d;
+    box-shadow: 0 0 15px rgba(255, 77, 77, 0.1);
+}
+
+.active-medium {
+    border-color: #ffcc00;
+    box-shadow: 0 0 15px rgba(255, 204, 0, 0.1);
+}
+
+.active-high {
+    border-color: #00ff99;
+    box-shadow: 0 0 15px rgba(0, 255, 100, 0.1);
+}
+
+/* ─── Difficulty Buttons ─────────────────────────────────── */
+.btn-low {
+    padding: 10px 25px;
+    background-color: transparent;
+    color: #ff4d4d;
+    border: 1px solid #ff4d4d;
+    border-radius: 6px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-low:hover {
+    background-color: #ff4d4d;
+    color: #0a0a0a;
+    box-shadow: 0 0 12px rgba(255, 77, 77, 0.4);
+}
+
+.btn-medium {
+    padding: 10px 25px;
+    background-color: transparent;
+    color: #ffcc00;
+    border: 1px solid #ffcc00;
+    border-radius: 6px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-medium:hover {
+    background-color: #ffcc00;
+    color: #0a0a0a;
+    box-shadow: 0 0 12px rgba(255, 204, 0, 0.4);
+}
+
+.btn-high {
+    padding: 10px 25px;
+    background-color: transparent;
+    color: #00ff99;
+    border: 1px solid #00ff99;
+    border-radius: 6px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-high:hover {
+    background-color: #00ff99;
+    color: #0a0a0a;
+    box-shadow: 0 0 12px rgba(0, 255, 100, 0.4);
+}
+
+/* ─── Yellow Badge ───────────────────────────────────────── */
+.badge-yellow {
+    background-color: #2a2000;
+    color: #ffcc00;
+    border: 1px solid #ffcc00;
+}

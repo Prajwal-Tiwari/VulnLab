@@ -14,50 +14,71 @@
             <h1>VulnLab</h1>
             <div class="navbar-links">
                 <a href="/dashboard">Dashboard</a>
+                <a href="/settings">⚙️ Settings</a>
                 <a href="/learn">📚 Learn</a>
                 <a href="/auth/logout">Logout</a>
             </div>
         </div>
 
-        <% if (vulnerable) { %>
-            <div class="warning">
-                ⚠ <strong>IDOR Vulnerability Active</strong> — No ownership check is being performed on this route.
+        <!-- Difficulty banner -->
+        <% if (difficulty==='low' ) { %>
+            <div class="danger">
+                <%= explanation.title %>
             </div>
-            <% } else { %>
-                <div class="success">
-                    ✅ <strong>Secure Route</strong> — Ownership was verified before returning this data.
+            <% } else if (difficulty==='medium' ) { %>
+                <div class="warning">
+                    <%= explanation.title %>
                 </div>
-                <% } %>
-
-                    <h2>Order Details</h2>
-
-                    <div class="order-card">
-                        <p><strong>Order ID</strong> #<%= order.id %>
-                        </p>
-                        <p><strong>Item</strong>
-                            <%= order.item_name %>
-                        </p>
-                        <p><strong>Price</strong> $<%= order.price %>
-                        </p>
-                        <p><strong>Owner ID</strong> User #<%= order.user_id %>
-                        </p>
-                        <p><strong>Your Session ID</strong> User #<%= session_user_id %>
-                        </p>
+                <% } else { %>
+                    <div class="success">
+                        <%= explanation.title %>
                     </div>
+                    <% } %>
 
-                    <% if (order.user_id !==session_user_id) { %>
-                        <div class="danger">
-                            🚨 <strong>Data Exposed!</strong> — This order belongs to User #<%= order.user_id %>
-                                but you are User #<%= session_user_id %>. This is a successful IDOR attack!
+                        <h2>Order Details</h2>
+
+                        <div class="order-card">
+                            <p><strong>Order ID</strong> #<%= order.id %>
+                            </p>
+                            <p><strong>Item</strong>
+                                <%= order.item_name %>
+                            </p>
+                            <p><strong>Price</strong> $<%= order.price %>
+                            </p>
+                            <p><strong>Owner ID</strong> User #<%= order.user_id %>
+                            </p>
+                            <p><strong>Your Session ID</strong> User #<%= session_user_id %>
+                            </p>
                         </div>
-                        <% } %>
 
-                            <hr class="divider" />
-                            <a href="/dashboard">← Back to Dashboard</a>
-                            &nbsp;&nbsp;
-                            <a href="/learn">📚 Learn about IDOR</a>
+                        <% if (order.user_id !==session_user_id) { %>
+                            <div class="danger">
+                                🚨 <strong>Data Exposed!</strong> — This order belongs to User #<%= order.user_id %>
+                                    but you are User #<%= session_user_id %>. Successful IDOR attack!
+                            </div>
+                            <% } %>
 
-                            <div class="footer">⚠ VulnLab — For educational purposes only</div>
+                                <!-- Explanation card -->
+                                <div class="learn-card">
+                                    <h3>What's happening here?</h3>
+                                    <p>
+                                        <%= explanation.what %>
+                                    </p>
+                                    <br />
+                                    <p>
+                                        <%= explanation.why %>
+                                    </p>
+                                    <div class="code-block">
+                                        <pre><%= explanation.code %></pre>
+                                    </div>
+                                </div>
+
+                                <hr class="divider" />
+                                <a href="/dashboard">← Back to Dashboard</a>
+                                &nbsp;&nbsp;
+                                <a href="/learn">📚 Learn about IDOR</a>
+
+                                <div class="footer">⚠ VulnLab — For educational purposes only</div>
     </div>
 </body>
 

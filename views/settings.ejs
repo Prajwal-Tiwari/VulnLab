@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Settings | VulnLab</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+    <div class="container">
+
+        <div class="navbar">
+            <h1>VulnLab</h1>
+            <div class="navbar-links">
+                <a href="/dashboard">Dashboard</a>
+                <a href="/learn">📚 Learn</a>
+                <a href="/auth/logout">Logout</a>
+            </div>
+        </div>
+
+        <h2>⚙️ Settings</h2>
+        <p style="color:#555; font-size:0.85rem; margin-bottom:25px;">// configure vulnerability difficulty level</p>
+
+        <div class="learn-card">
+            <h3>Current Difficulty</h3>
+            <p>You are currently on:
+                <% if (difficulty==='low' ) { %>
+                    <span class="badge badge-red">🔴 Low</span>
+                    <% } else if (difficulty==='medium' ) { %>
+                        <span class="badge badge-yellow">🟡 Medium</span>
+                        <% } else { %>
+                            <span class="badge badge-green">🟢 High</span>
+                            <% } %>
+            </p>
+        </div>
+
+        <!-- ─── Low ───────────────────────────────────────────── -->
+        <div class="difficulty-card <%= difficulty === 'low' ? 'active-low' : '' %>">
+            <div class="difficulty-header">
+                <span class="badge badge-red">🔴 Low</span>
+                <% if (difficulty==='low' ) { %>
+                    <span style="color:#555; font-size:0.8rem;">// currently active</span>
+                    <% } %>
+            </div>
+            <h3>No Protection</h3>
+            <p>Orders are accessed via sequential integer IDs. No ownership check is performed. Anyone can access any
+                order by simply changing the number in the URL.</p>
+            <br />
+            <p style="color:#555; font-size:0.85rem;">Example: <code>/orders/4</code></p>
+            <br />
+            <p><strong>What you'll learn:</strong> How IDOR works in its most basic form.</p>
+            <br />
+            <form method="POST" action="/settings">
+                <input type="hidden" name="difficulty" value="low" />
+                <button type="submit" class="btn-low">Set Low</button>
+            </form>
+        </div>
+
+        <!-- ─── Medium ────────────────────────────────────────── -->
+        <div class="difficulty-card <%= difficulty === 'medium' ? 'active-medium' : '' %>">
+            <div class="difficulty-header">
+                <span class="badge badge-yellow">🟡 Medium</span>
+                <% if (difficulty==='medium' ) { %>
+                    <span style="color:#555; font-size:0.8rem;">// currently active</span>
+                    <% } %>
+            </div>
+            <h3>Partial Protection</h3>
+            <p>Orders are accessed via a Base64 encoded ID instead of a plain integer. The ID is obscured but still
+                decodable. Security through obscurity — not real security.</p>
+            <br />
+            <p style="color:#555; font-size:0.85rem;">Example: <code>/orders/NA==</code> (base64 of "4")</p>
+            <br />
+            <p><strong>What you'll learn:</strong> Why obscuring IDs is not the same as securing them.</p>
+            <br />
+            <form method="POST" action="/settings">
+                <input type="hidden" name="difficulty" value="medium" />
+                <button type="submit" class="btn-medium">Set Medium</button>
+            </form>
+        </div>
+
+        <!-- ─── High ──────────────────────────────────────────── -->
+        <div class="difficulty-card <%= difficulty === 'high' ? 'active-high' : '' %>">
+            <div class="difficulty-header">
+                <span class="badge badge-green">🟢 High</span>
+                <% if (difficulty==='high' ) { %>
+                    <span style="color:#555; font-size:0.8rem;">// currently active</span>
+                    <% } %>
+            </div>
+            <h3>Strong Protection</h3>
+            <p>Orders are accessed via unpredictable UUIDs AND ownership is verified server-side. Even if you guess a
+                UUID, the server will reject unauthorized access.</p>
+            <br />
+            <p style="color:#555; font-size:0.85rem;">Example: <code>/orders/f47ac10b-58cc-4372-a567-0e02b2c3d479</code>
+            </p>
+            <br />
+            <p><strong>What you'll learn:</strong> How proper authorization + non-enumerable IDs work together.</p>
+            <br />
+            <form method="POST" action="/settings">
+                <input type="hidden" name="difficulty" value="high" />
+                <button type="submit" class="btn-high">Set High</button>
+            </form>
+        </div>
+
+        <div class="footer">⚠ VulnLab — For educational purposes only</div>
+    </div>
+</body>
+
+</html>
