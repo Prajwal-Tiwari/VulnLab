@@ -57,21 +57,21 @@
                         </td>
                         <td>$<%= order.price %>
                         </td>
-                        <td>
-                            <% if (difficulty==='low' ) { %>
-                                <a href="/orders/<%= order.id %>">
-                                    <span class="badge badge-red">🔴 View Order</span>
+                    <td>
+                        <% if (difficulty==='low' ) { %>
+                            <a href="/orders/<%= order.id %>">
+                                <span class="badge badge-red">🔴 View Order</span>
+                            </a>
+                            <% } else if (difficulty==='medium' ) { %>
+                                <a href="/orders/<%= Buffer.from(String(order.id)).toString('base64') %>">
+                                    <span class="badge badge-yellow">🟡 View Order</span>
                                 </a>
-                                <% } else if (difficulty==='medium' ) { %>
-                                    <a href="/orders/<%= Buffer.from(String(order.id)).toString('base64') %>">
-                                        <span class="badge badge-yellow">🟡 View Order</span>
+                                <% } else { %>
+                                    <a href="/orders/<%= order.uuid %>">
+                                        <span class="badge badge-green">🟢 View Order</span>
                                     </a>
-                                    <% } else { %>
-                                        <a href="/orders/<%= order.uuid %>">
-                                            <span class="badge badge-green">🟢 View Order</span>
-                                        </a>
-                                        <% } %>
-                        </td>
+                                    <% } %>
+                    </td>
                     </tr>
                     <% }) %>
             </tbody>
