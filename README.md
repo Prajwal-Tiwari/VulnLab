@@ -1,118 +1,130 @@
-# 🧪 VulnLab — IDOR Vulnerability Lab
+# VulnLab — IDOR Vulnerability Lab
 
 ![Node.js](https://img.shields.io/badge/Node.js-Backend-green)
 ![Express](https://img.shields.io/badge/Express.js-Web_Framework-lightgrey)
 ![Security Lab](https://img.shields.io/badge/Web_Security-IDOR_Lab-red)
 ![License](https://img.shields.io/badge/License-MIT-blue)
 
-A deliberately vulnerable web application built to demonstrate and study **Insecure Direct Object Reference (IDOR)** — one of the most common and impactful web security vulnerabilities.
+A deliberately vulnerable web application built to learn and understand Insecure Direct Object Reference (IDOR) — one of the most common and impactful web security vulnerabilities found in real-world applications.
 
-> ⚠️ This application is intentionally insecure. Run it only in a **local or controlled environment**. Never deploy it publicly.
+> This application is intentionally insecure. Run it only in a local or controlled environment. Never deploy it publicly.
 
-Current Version: **v1.0**
+Current Version: **v2.0**
 
 ---
 
 ## What is VulnLab?
 
-VulnLab is a **hands-on web security learning lab** designed to demonstrate how vulnerabilities appear in backend systems.
+VulnLab is a hands-on security lab that simulates a simple e-commerce order system with a real IDOR vulnerability built in. The goal is not just to show that the vulnerability exists, but to walk through the full lifecycle — from exploiting it, understanding why it works, to seeing the correct fix implemented.
 
-It simulates a simple e-commerce order system with an **IDOR vulnerability** so learners can:
-
-- observe the vulnerability
-- exploit it
-- understand the impact
-- see the correct fix
-
-This project is **not a CTF challenge**.  
-It is designed as a **controlled learning environment** that demonstrates the full lifecycle:
-
-**exploit → impact → fix**
+This is not a CTF challenge. There are no scores or timers. It is a controlled environment meant for learning.
 
 ---
 
 ## The Vulnerability
 
-IDOR (Insecure Direct Object Reference) occurs when an application exposes internal object identifiers (like database IDs) without verifying that the requesting user actually owns the resource.
+IDOR happens when a server exposes internal object identifiers — like database IDs — without checking whether the person requesting the resource actually owns it.
 
-Example vulnerable route:
-
+The vulnerable version:
 ```javascript
-// ❌ Vulnerable — no ownership check
+// No ownership check — anyone can access any order
 app.get('/orders/:id', (req, res) => {
   const order = db.prepare('SELECT * FROM orders WHERE id = ?').get(orderId);
   res.render('order', { order });
 });
 ```
 
-Secure version:
-
+The correct version:
 ```javascript
-// ✅ Secure — ownership verified
+// Ownership verified before returning data
 if (order.user_id !== req.session.user_id) {
   return res.status(403).send('Forbidden');
 }
 ```
 
-One missing authorization check can lead to **complete data exposure**.
+One missing check. That is all it takes for a full data breach.
+
+---
+
+## Difficulty Levels
+
+VulnLab v2.0 adds a structured difficulty system inspired by DVWA.
+
+**Low**
+Orders are accessed via plain sequential integer IDs with no ownership check. The most basic form of IDOR — just change the number in the URL and you can access anyone's data.
+
+**Medium**
+Orders are accessed via Base64 encoded IDs. The ID looks obscure but Base64 is not encryption — anyone can decode it in a browser console using `atob()`. The vulnerability is still fully exploitable. This level teaches why hiding data is not the same as securing it.
+
+**High**
+Orders use unpredictable UUIDs and the server verifies ownership before returning any data. Even if you somehow get a valid UUID, the server-side check blocks unauthorized access. This is the correct implementation.
+
+You can switch difficulty levels anytime from the Settings page inside the app.
 
 ---
 
 ## Prerequisites
 
-Before running VulnLab, make sure you have the following installed on your machine:
+### Node.js (Required)
 
-### 1. Node.js (Required)
+VulnLab runs on Node.js. Install it before anything else.
 
-VulnLab runs on Node.js. You must install it before anything else.
-
-**How to install:**
 1. Go to https://nodejs.org
-2. Download the **LTS version** (recommended)
-3. Run the installer and follow the steps
-4. Make sure to check **"Add to PATH"** during installation
+2. Download the LTS version
+3. Run the installer — make sure to check "Add to PATH" during installation
 
-**Verify installation:**
-Open a new terminal and run:
+Verify the installation by opening a fresh terminal and running:
 ```cmd
 node -v
 npm -v
 ```
-You should see version numbers like `v20.x.x` and `10.x.x`.
-If you see `npm is not recognized` — Node.js is either not installed 
-or not added to PATH. Reinstall and make sure to check "Add to PATH".
 
-### 2. Git (Required)
+You should see version numbers. If you see `npm is not recognized`, Node.js was either not installed correctly or not added to PATH. Reinstall and check that option. Always open a fresh terminal after installing — old terminals will not pick up the new installation.
 
-To clone the repository you need Git installed.
+### Git (Required)
 
-**How to install:**
 1. Go to https://git-scm.com/downloads
 2. Download and install for your OS
 3. Verify: `git --version`
 
-### 3. Docker (Optional)
+### Docker (Optional)
 
 Only needed if you want to run VulnLab inside a container.
 
-**How to install:**
 1. Go to https://www.docker.com/products/docker-desktop
 2. Download Docker Desktop for your OS
-3. Run the installer
-4. Verify: `docker --version`
+3. Verify after installing: `docker --version`
 
-> ⚠️ On Windows, after installing Node.js always open a **fresh terminal** 
-> before running npm commands. Old terminals won't recognize npm even after 
-> installation.
+### SQLite (No Installation Needed)
+
+VulnLab uses SQLite via the `better-sqlite3` package. It installs automatically when you run `npm install`. The database file is also created and seeded on first run — you will see this in the terminal:
+```
+Database seeded with users and orders
+```
+
+If you want to visually inspect the database, DB Browser for SQLite is a good free tool: https://sqlitebrowser.org/dl — not required to run the app though.
+
+### Windows PowerShell (Windows Only)
+
+If you get a scripts execution error in PowerShell, run this once:
+```cmd
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+```
+
+### Port 3000
+
+VulnLab runs on port 3000 by default. If something else is already using that port, the app will not start. Check with:
+```cmd
+netstat -ano | findstr :3000
+```
+
+If it is taken, change the `PORT` value in `app.js` to something else like `3001`.
 
 ---
 
-## Setup & Installation
+## Setup and Installation
 
-### Option 1 — Run with Node.js
-
-Make sure Node.js is installed.
-
+**Option 1 — Node.js**
 ```bash
 git clone https://github.com/Prajwal-Tiwari/VulnLab.git
 cd VulnLab
@@ -120,18 +132,11 @@ npm install
 npm run dev
 ```
 
-Open:
+Then open `http://localhost:3000` in your browser.
 
-```
-http://localhost:3000
-```
+**Option 2 — Docker**
 
----
-
-### Option 2 — Run with Docker
-
-Ensure Docker Desktop is running.
-
+Make sure Docker Desktop is running first.
 ```bash
 git clone https://github.com/Prajwal-Tiwari/VulnLab.git
 cd VulnLab
@@ -139,17 +144,13 @@ docker build -t vulnlab .
 docker run -p 3000:3000 vulnlab
 ```
 
-Open:
-
-```
-http://localhost:3000
-```
+Then open `http://localhost:3000` in your browser.
 
 ---
 
 ## Test Accounts
 
-The database comes pre-seeded with two users.
+The database is pre-seeded with two users:
 
 | Username | Password |
 |----------|----------|
@@ -158,49 +159,53 @@ The database comes pre-seeded with two users.
 
 ---
 
-## How to Exploit IDOR in this Lab
+## How to Test the Vulnerability
 
-1. Login as `alice / alice123`
-2. View Alice's orders on the dashboard
-3. Click any order — it opens at `/orders/1`
-4. Change the URL manually to `/orders/4`
-5. You will now see **Bob's order**
+**Low difficulty**
 
-The application will display a 🚨 banner explaining the data breach.
+1. Login as alice / alice123
+2. Open any order from the dashboard — it loads at `/orders/1`
+3. Change the URL to `/orders/4`
+4. You are now viewing Bob's order while logged in as Alice
 
----
+**Medium difficulty**
 
-## How to See the Secure Fix
+1. Switch to Medium in Settings
+2. Dashboard links will look like `/orders/MQ==`
+3. Open your browser console and run `atob('MQ==')` — it returns `1`
+4. Encode Bob's order ID: `btoa('4')` returns `NA==`
+5. Visit `/orders/NA==` — still exposed
 
-1. Return to the dashboard
-2. Click **🟢 Secure** on any order
-3. Change the order ID again
-4. The server will return **403 Forbidden**
+**High difficulty**
 
-Attack blocked.
+1. Switch to High in Settings
+2. Dashboard links use UUIDs
+3. Try modifying the UUID in the URL
+4. Server returns 403 Forbidden
 
 ---
 
 ## Project Structure
-
 ```
 vulnlab/
 ├── db/
-│   └── database.js
+│   └── database.js        
 ├── routes/
-│   ├── auth.js
-│   └── orders.js
+│   ├── auth.js            
+│   └── orders.js          
 ├── views/
 │   ├── login.ejs
 │   ├── register.ejs
 │   ├── dashboard.ejs
 │   ├── order.ejs
 │   ├── forbidden.ejs
+│   ├── settings.ejs       
 │   └── learn.ejs
 ├── public/
 │   └── style.css
 ├── app.js
 ├── Dockerfile
+├── CHANGELOG.md
 └── README.md
 ```
 
@@ -208,82 +213,45 @@ vulnlab/
 
 ## Tech Stack
 
-Backend
-- Node.js
-- Express.js
-
-Database
-- SQLite (better-sqlite3)
-
-Authentication
-- express-session (session-based authentication)
-
-Frontend
-- EJS templates
-- Vanilla CSS
-
-Containerization
-- Docker
+| Layer | Technology |
+|-------|-----------|
+| Backend | Node.js + Express.js |
+| Database | SQLite via better-sqlite3 |
+| Authentication | express-session |
+| Frontend | EJS + Vanilla CSS |
+| Container | Docker |
 
 ---
 
-## Learning Outcomes
+## What You Will Learn
 
-After completing this lab you should understand:
-
-- What **IDOR vulnerabilities** are
-- Why **authentication ≠ authorization**
-- How predictable IDs enable attacks
-- How missing authorization checks cause data breaches
-- How to implement **object-level authorization**
+- What IDOR is and why it happens
+- The difference between authentication and authorization
+- Why predictable sequential IDs are a security risk
+- Why obscuring data is not the same as securing it
+- How UUIDs reduce the attack surface
+- How to implement proper object-level authorization
 
 ---
 
 ## Roadmap
 
-VulnLab will evolve into a broader web security learning platform.
-
-Future plans include:
-
-- Difficulty modes
-- XSS vulnerability labs
-- CSRF vulnerability labs
-- API authorization flaws
-- Security misconfiguration scenarios
-- Advanced backend attack chains
+| Stage | Status | Focus |
+|-------|--------|-------|
+| Stage 1 | Complete | IDOR vulnerability lab |
+| Stage 2 | Complete | Difficulty system |
+| Stage 3 | Planned | XSS vulnerability lab |
+| Stage 4 | Planned | CSRF vulnerability lab |
+| Stage 5 | Planned | API authorization flaws |
 
 ---
 
-## Changelog
+## Contributing
 
-See version history in:
-
-```
-CHANGELOG.md
-```
-
----
-
-## Want to Contribute?
-
-Contributions are welcome.
-
-If you're interested in **web security education or backend development**, you can help by:
-
-- Adding new vulnerability labs
-- Improving vulnerability explanations
-- Writing documentation
-- Enhancing UI
-- Adding logging or tests
-
-Look for issues labeled **good first issue**.
+Contributions are welcome. You can help by adding new vulnerability labs, improving explanations, writing documentation, or improving the UI. Look for issues labeled good first issue.
 
 ---
 
 ## Ethical Disclaimer
 
-This application contains **intentional vulnerabilities** and is designed strictly for educational purposes in controlled environments.
-
-Do **not** use the techniques demonstrated here against systems you do not own or have explicit permission to test.
-
-The developer is not responsible for any misuse of this project.
+This application contains intentional vulnerabilities and is designed strictly for educational use in controlled environments. Do not use anything demonstrated here against systems you do not own or have explicit permission to test. The developer is not responsible for any misuse.
