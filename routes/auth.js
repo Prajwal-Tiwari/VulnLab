@@ -2,62 +2,47 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db/database');
 
-//GET /auth/register
-// Shows the register page
-router.get('/register', (req, res) => {
-  res.render('register', { error: null });
-});
-
-// POST /auth/register
-// Handles registration form submission
+//POST /auth/register
 router.post('/register', (req, res) => {
-  const { username, password } = req.body;
-
-  // Check if username already exists
+  const {username, password} = req.body;
   const existingUser = db.prepare('SELECT * FROM users WHERE username = ?').get(username);
   if (existingUser) {
-    return res.render('register', { error: 'Username already taken!' });
+    return res.status(400).json({error: 'Username already taken! '});
   }
-
-  // Insert new user
-  const insertUser = db.prepare('INSERT INTO users (username, password) VALUES (?, ?)');
+  const insertUser = db.prepare('INSERT INTO users (username, password) VALUES (?,?)');
   insertUser.run(username, password);
+  res.json({success: true});
+})
 
-  // Redirect to login after successful registration
-  res.redirect('/auth/login');
-});
-
-//  GET /auth/login
-// Shows the login page
-router.get('/login', (req, res) => {
-  res.render('login', { error: null });
-});
-
-//  POST /auth/login 
-// Handles login form submission
+//POST /auth/login
 router.post('/login', (req, res) => {
-  const { username, password } = req.body;
+  const {username, password} = req.body;
 
-  // Find user in database
   const user = db.prepare('SELECT * FROM users WHERE username = ? AND password = ?').get(username, password);
 
-  if (!user) {
-    return res.render('login', { error: 'Invalid username or password!' });
+  if(!user) {
+    return res.status(401).json({error: 'Invalid Username and password'});
   }
-
-  // Save user info in session
   req.session.user_id = user.id;
   req.session.username = user.username;
 
-  // Redirect to dashboard
-  res.redirect('/dashboard');
-});
+  res.json({success: true});
+})
 
-//  GET /auth/logout
-// Logs the user out by destroying session
+//GET /auth/logout
 router.get('/logout', (req, res) => {
   req.session.destroy();
-  res.redirect('/auth/login');
-});
+  res.redirect('/login.html');
+})
 
+//GET /auth/me
+router.get('/me', (req,res) => {
+  if (!req.session.user_id) {
+    return res.status(401).json({error: 'Not logged in'});
+  }
+  res.json({
+    user_id: req.session.user_id,
+    username: req.session.username
+  });
+});
 module.exports = router;

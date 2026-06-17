@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Order</title>
+    <link rel="stylesheet" href="/style.css">
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>VulnLab</h1>
+        <div class="nav">
+          <a href="/dashboard.html">Dashboard</a>
+          <a href="/settings.html">Settings</a>
+          <a href="/learn.html">Learn</a>
+          <a href="/auth/logout">Logout</a>
+        </div>
+      </div>
+      <div id="content"></div>
+
+      <div class="footer">!! For Educational Purposes only</div>
+    </div>
+
+    <script>
+      async function loadOrder() {
+        //Get the id from the URL : eg. /order.html?id=3
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get("id");
+
+        if (!id) {
+          document.getElementById("content").innerHTML =
+            '<p class="error">No order ID Provided. </p>';
+          return;
+        }
+        const response = await fetch(`/api/orders/${id}`);
+        const data = await response.json(); 
+
+        //Not Logged in
+        if (response.status === 401) {
+          window.location.href = "/login.html";
+          return;
+        }
+        //Forbidden: high Difficulty: blocked the request
+        if (response.status === 403) {
+          document.getElementById("content").innerHTML = `
+            <div class="alert alert-danger">
+                <h2>!! Acess Denied</h2>
+                <p>The server blocked this request because the order doesn't belong to you.</p>
+                <p class="subtitle">This is what proper authorization looks like.</p>
+            </div>
+            <div class="explanation-box">
+                <h3>Why was this blocked ?</h3>
+                <p>Order owner ID: <code>${data.order_owner}</code></p>
+                <p>Your user ID: <code>${data.session_user}</code></p>
+                <p>They don't match - access denied</p>
+            </div>
+            <a href="/dashboard.html" class="btn">Back to Dashboard</a>
+            `;
+            return;
+        }
+        // Order not found
+          if (response.status === 404) {
+              document.getElementById('content').innerHTML = `
+          <p class="error">Order not found.</p>
+          <a href="/dashboard.html" class="btn">← Back to Dashboard</a>
+        `;
+              return;
+          }
+
+          // Success — show the order
+          document.getElementById('content').innerHTML = `
+        <h2>Order #${data.order.id}</h2>
+        <div class="order-card">
+          <p><strong>Item:</strong> ${data.order.item_name}</p>
+          <p><strong>Status:</strong> <span class="badge">${data.order.price}</span></p>
+          <p><strong>Owner ID:</strong> <code>${data.order.user_id}</code></p>
+        </div>
+
+        <div class="explanation-box ${data.vulnerable ? 'vulnerable' : 'secure'}">
+          <h3>${data.explanation.title}</h3>
+          <p><strong>What's happening:</strong> ${data.explanation.what}</p>
+          <p><strong>Why it matters:</strong> ${data.explanation.why}</p>
+          <pre><code>${data.explanation.code}</code></pre>
+        </div>
+
+        <a href="/dashboard.html" class="btn">← Back to Dashboard</a>
+      `;
+      }
+      loadOrder();
+    </script>
+  </body>
+</html>

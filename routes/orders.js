@@ -2,50 +2,46 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db/database');
 
-// ─── Middleware: Check if user is logged in ───────────────
-function isLoggedIn(req, res, next) {
+//Middleware: check if user is logged in 
+function isLoggedin(req, res, next) {
   if (!req.session.user_id) {
-    return res.redirect('/auth/login');
+    return res.status(401).json({error: 'Not logged in'});
   }
   next();
 }
 
-// ─── Helper: Get current difficulty ──────────────────────
+//Helper
 function getDifficulty(req) {
-  return req.session.difficulty || 'low';
+  return req.session.difficulty || 'low';//the low difficulty is default
 }
 
-// ─── GET /dashboard ───────────────────────────────────────
-router.get('/dashboard', isLoggedIn, (req, res) => {
-  const difficulty = getDifficulty(req);
+//GET /api/dashboard
+router.get('/api/dashboard', isLoggedin, (req, res) => {
+  const diff = getDifficulty(req);
   const orders = db.prepare('SELECT * FROM orders WHERE user_id = ?').all(req.session.user_id);
 
-  res.render('dashboard', {
+  res.json ({
     username: req.session.username,
-    orders: orders,
-    difficulty: difficulty
+    difficulty: diff,
+    orders: orders
   });
 });
 
-// ─── GET /orders/:id ──────────────────────────────────────
-// Behavior changes based on difficulty
-router.get('/orders/:id', isLoggedIn, (req, res) => {
-  const difficulty = getDifficulty(req);
+//GET /api/orders/:id
+router.get('/api/orders/:id', isLoggedin, (req, res) => {
+  const diff = getDifficulty(req);
 
-  // ── LOW ─────────────────────────────────────────────────
-  // No protection — fetch by plain integer ID, no ownership check
-  if (difficulty === 'low') {
+  //Low
+  if(diff === 'low'){
     const order = db.prepare('SELECT * FROM orders WHERE id = ?').get(req.params.id);
+    if (!order) return res.status(404).json({error: 'Order not found'});
 
-    if (!order) return res.status(404).send('Order not found!');
-
-    return res.render('order', {
-      order: order,
-      session_user_id: req.session.user_id,
+    return res.json({
+      order,
       difficulty: 'low',
       vulnerable: true,
       explanation: {
-        title: '🔴 Low — No Protection',
+        title: 'Low — No Protection',
         what: 'The server fetches orders using a plain sequential integer ID with no ownership check.',
         why: 'An attacker can simply increment the ID in the URL to access any order in the database.',
         code: "const order = db.prepare('SELECT * FROM orders WHERE id = ?').get(orderId);\n// No ownership check — IDOR vulnerability!"
@@ -53,88 +49,73 @@ router.get('/orders/:id', isLoggedIn, (req, res) => {
     });
   }
 
-  // ── MEDIUM ───────────────────────────────────────────────
-  // Partial protection — ID is base64 encoded but still decodable
-  if (difficulty === 'medium') {
+  //Medium
+  if(diff === 'medium') {
     let realId;
-
     try {
-      // Decode base64 to get real ID
       realId = Buffer.from(req.params.id, 'base64').toString('utf8');
-    } catch (e) {
-      return res.status(400).send('Invalid order ID format.');
+    } catch(e) {
+      return res.status(401).json({error: 'Invalid order ID format'});
     }
 
     const order = db.prepare('SELECT * FROM orders WHERE id = ?').get(realId);
-
-    if (!order) return res.status(404).send('Order not found!');
-
-    // Still no ownership check — still vulnerable!
-    return res.render('order', {
-      order: order,
-      session_user_id: req.session.user_id,
+    if(!order) {
+      return res.status(404).json({error: 'No order found'});
+    }
+    return res.json({
+      order,
       difficulty: 'medium',
       vulnerable: true,
       explanation: {
-        title: '🟡 Medium — Security Through Obscurity',
+        title: 'Medium — Security Through Obscurity',
         what: 'The server uses Base64 encoded IDs instead of plain integers. The ID looks random but is just encoded.',
-        why: 'Base64 is not encryption — anyone can decode it. Run btoa("4") in browser console to get the encoded ID.',
+        why: "Base64 is not encryption — anyone can decode it. Run atob('NA==') in browser console to get the real ID.",
         code: "// Encoded ID: btoa('4') = 'NA=='\n// Decoded: atob('NA==') = '4'\n// Still no ownership check — still vulnerable!"
       }
     });
   }
 
-  // ── HIGH ─────────────────────────────────────────────────
-  // Strong protection — UUID + ownership check
-  if (difficulty === 'high') {
+  //High
+  if(diff === 'high') {
     const order = db.prepare('SELECT * FROM orders WHERE uuid = ?').get(req.params.id);
-
-    if (!order) return res.status(404).send('Order not found!');
-
-    // Ownership check — this is the fix!
-    if (order.user_id !== req.session.user_id) {
-      return res.status(403).render('forbidden', {
+    if(!order){
+      return res.status(404).json({error: 'Order not found'});
+    }
+    if (order.user_id != req.session.user_id) {
+      return res.status(403).json({
+        error: 'FORBIDDEN',
+        difficulty: 'high',
         order_id: req.params.id,
         order_owner: order.user_id,
-        session_user: req.session.user_id,
-        difficulty: 'high'
+        session_user: req.session.user_id
       });
     }
-
-    return res.render('order', {
-      order: order,
-      session_user_id: req.session.user_id,
+    return res.json({
+      order,
       difficulty: 'high',
       vulnerable: false,
       explanation: {
-        title: '🟢 High — Proper Protection',
+        title: 'High — Proper Protection',
         what: 'Orders use unpredictable UUIDs AND the server verifies ownership before returning data.',
         why: 'Even if an attacker somehow gets a UUID, the ownership check blocks unauthorized access.',
-        code: "// UUID: f47ac10b-58cc-4372-a567-0e02b2c3d479\nif (order.user_id !== req.session.user_id) {\n  return res.status(403).render('forbidden');\n}"
+        code: "if (order.user_id !== req.session.user_id) {\n  return res.status(403).json({ error: 'Forbidden' });\n}"
       }
     });
   }
-});
+})
 
-// ─── GET /settings ────────────────────────────────────────
-router.get('/settings', isLoggedIn, (req, res) => {
-  res.render('settings', {
-    difficulty: getDifficulty(req)
-  });
-});
+//GET /api/settings
+router.get('/api/settings', isLoggedin, (req, res) => {
+  res.json({difficulty: getDifficulty(req)});
+})
 
-// ─── POST /settings ───────────────────────────────────────
-router.post('/settings', isLoggedIn, (req, res) => {
-  const { difficulty } = req.body;
+// POST /api/settings
+router.post('/api/settings', isLoggedin, (req, res) => {
+  const {difficulty} = req.body;
   if (['low', 'medium', 'high'].includes(difficulty)) {
     req.session.difficulty = difficulty;
   }
-  res.redirect('/settings');
-});
-
-// ─── GET /learn ───────────────────────────────────────────
-router.get('/learn', isLoggedIn, (req, res) => {
-  res.render('learn');
+  res.json({success: true, difficulty: req.session.difficulty});
 });
 
 module.exports = router;

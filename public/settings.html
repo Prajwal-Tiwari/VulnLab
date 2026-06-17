@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Settings | VulnLab</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>VulnLab</h1>
+            <div class="nav">
+                <a href="/dashboard.html">Dashboard</a>
+                <a href="/settings.html">Settings</a>
+                <a href="/learn.html">Learn</a>
+                <a href="/auth/logout">Logout</a>
+            </div>
+        </div>
+
+        <h2>Settings</h2>
+        <p class="subtitle">Change the difficulty level to explore different vulnerability scenarios</p>
+
+        <div class="settings-card">
+            <h3>Current Difficulty: <span id="current-difficulty"></span></h3>
+
+            <div class="difficulty-options">
+                <button class="diff-btn" data-level="low">
+                    Low — Plain Integer IDs
+                </button>
+                <button class="diff-btn" data-level="medium">
+                    Medium — Base64 Encoded IDs
+                </button>
+                <button class="diff-btn" data-level="high">
+                    High — UUIDs + Ownership Check
+                </button>
+            </div>
+
+            <p class="success" id="success-msg" style="display:none;">✔ Difficulty updated!</p>
+        </div>
+
+        <div class="footer">!! For educational purposes only</div>
+    </div>
+
+    <script>
+        // Current difficulty
+        async function loadSettings() {
+            const response = await fetch('/api/settings');
+
+            if (response.status === 401) {
+                window.location.href = '/login.html';
+                return;
+            }
+
+            const data = await response.json();
+            document.getElementById('current-difficulty').textContent = data.difficulty.toUpperCase();
+            highlightActive(data.difficulty);
+        }
+
+        //which button which difficulty
+        function highlightActive(difficulty) {
+            document.querySelectorAll('.diff-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.level === difficulty) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        //Button clicks
+        document.querySelectorAll('.diff-btn').forEach(btn => {
+            btn.addEventListener('click', async function () {
+                const level = this.dataset.level;
+
+                const response = await fetch('/api/settings', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ difficulty: level })
+                });
+
+                const data = await response.json();
+
+                document.getElementById('current-difficulty').textContent = data.difficulty.toUpperCase();
+                highlightActive(data.difficulty);
+
+                const msg = document.getElementById('success-msg');
+                msg.style.display = 'block';
+                setTimeout(() => msg.style.display = 'none', 2000);
+            });
+        });
+
+        loadSettings();
+    </script>
+</body>
+
+</html>

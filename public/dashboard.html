@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+        <h1>VulnLab</h1>
+        <div class="nav">
+            <a href="/dashboard.html" >Dashboard</a>
+            <a href="/settings.html">Settings</a>
+            <a href="/learn.html" >Learn</a>
+            <a href="/auth/logout">Logout</a>
+        </div>
+    </div>
+    <h2>Welcome, <span id = "username"></span></h2>
+    <p class="subtitle">Difficulty: <span id="difficulty"></span></p>
+
+    <h3>Your Orders</h3>
+    <ul id="orders-list" class="order-list"></ul>
+    <div class="footer">!! For Educational purposes only</div>
+    </div>
+    
+
+    <script>
+        async function loadDashboard() {
+            const response = await fetch('/api/dashboard');
+
+            //if not loged in, redirect to login
+            if (response.status===401) {
+                window.location.href = '/login.html'
+                return;
+            }
+
+            const data = await response.json();
+
+            //Fill in username  and difficulty
+            document.getElementById('username').textContent = data.username;
+            document.getElementById('difficulty').textContent = data.difficulty.toUpperCase();
+
+            //Building orders list
+            const list = document.getElementById('orders-list');
+            data.orders.forEach(order => {
+                const li = document.createElement('li');
+
+                //the link changes based on difficulty
+                let orderLink;
+                if (data.difficulty === 'low') {
+                    orderLink = `/order.html?id=${order.id}`;
+                } else if (data.difficulty === 'medium') {
+                    orderLink = `/order.html?id=${btoa(order.id)}`;
+                } else {
+                    orderLink = `/order.html?id=${order.uuid}`;
+                }
+
+                li.innerHTML = `
+                    <a href="${orderLink}" >
+                        Order #${order.id} - ${order.item_name}
+                        <span class="badge">${order.price}</span>
+                    </a>  
+                `;
+                list.appendChild(li);
+            });
+        }
+
+        loadDashboard();
+    </script>
+</body>
+</html>

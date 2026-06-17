@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Learn | VulnLab</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>VulnLab</h1>
+            <div class="nav">
+                <a href="/dashboard.html">Dashboard</a>
+                <a href="/settings.html">Settings</a>
+                <a href="/learn.html">Learn</a>
+                <a href="/auth/logout">Logout</a>
+            </div>
+        </div>
+
+        <h2>Understanding IDOR</h2>
+        <p class="subtitle">Insecure Direct Object Reference — OWASP Top 10</p>
+
+        <div class="learn-section">
+            <h3>What is IDOR?</h3>
+            <p>
+                IDOR happens when an application uses a user-controlled input to access objects
+                directly without verifying that the user is authorized to access them.
+                The most common example is an ID in a URL — like <code>/orders/4</code>.
+                If the server doesn't check whether order 4 belongs to you, anyone can access it
+                just by changing the number.
+            </p>
+        </div>
+
+        <div class="learn-section">
+            <h3>Authentication vs Authorization</h3>
+            <p>
+                These two are constantly confused — even by developers.
+            </p>
+            <ul>
+                <li><strong>Authentication</strong> — proves who you are. Logging in with a username and password is
+                    authentication.</li>
+                <li><strong>Authorization</strong> — controls what you're allowed to do. Checking that an order belongs
+                    to you before showing it is authorization.</li>
+            </ul>
+            <p>
+                IDOR is always an <strong>authorization failure</strong> — the app knows who you are,
+                it just never checks what you're allowed to see.
+            </p>
+        </div>
+
+        <div class="learn-section">
+            <h3>The Three Difficulty Levels</h3>
+
+            <div class="difficulty-card low">
+                <h4>Low — Plain Integer IDs</h4>
+                <p>Orders are accessed by sequential integers like <code>/orders/1</code>, <code>/orders/2</code>.
+                    No ownership check exists. An attacker just increments the number to access anyone's data.</p>
+                <pre><code>// Vulnerable code
+const order = db.prepare('SELECT * FROM orders WHERE id = ?').get(id);
+// No check — returns the order to anyone who asks</code></pre>
+            </div>
+
+            <div class="difficulty-card medium">
+                <h4>Medium — Base64 Encoded IDs</h4>
+                <p>IDs are Base64 encoded, so <code>1</code> becomes <code>MQ==</code>. Looks confusing,
+                    but Base64 is not encryption — anyone can decode it in seconds using <code>atob()</code> in the
+                    browser console.</p>
+                <pre><code>// Still vulnerable — just obscured
+atob('MQ==') // → '1'
+atob('NA==') // → '4'
+// The ID is still sequential underneath</code></pre>
+            </div>
+
+            <div class="difficulty-card high">
+                <h4>High — UUIDs + Ownership Check</h4>
+                <p>Orders use unpredictable UUIDs like <code>a3f8c21d-...</code> AND the server
+                    verifies ownership before returning any data. Both layers are needed.</p>
+                <pre><code>// Secure code
+const order = db.prepare('SELECT * FROM orders WHERE uuid = ?').get(uuid);
+if (order.user_id !== req.session.user_id) {
+  return res.status(403).json({ error: 'Forbidden' });
+}</code></pre>
+            </div>
+        </div>
+
+        <div class="learn-section">
+            <h3>How to Test It Yourself</h3>
+            <ol>
+                <li>Login as <strong>alice</strong> (password: <code>alice123</code>)</li>
+                <li>Go to your dashboard and click any order</li>
+                <li>In the URL, change the ID to 4, 5, or 6 — those belong to Bob</li>
+                <li>On Low difficulty, you'll see Bob's orders with no error</li>
+                <li>Switch to High difficulty and try the same — you'll be blocked</li>
+            </ol>
+        </div>
+
+        <div class="footer">⚠ For educational purposes only</div>
+    </div>
+</body>
+
+</html>

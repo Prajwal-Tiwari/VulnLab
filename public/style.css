@@ -63,7 +63,6 @@ h1 {
     letter-spacing: 2px;
 }
 
-
 h1::before {
     content: '> ';
     color: #00ff99;
@@ -84,6 +83,25 @@ h3 {
     letter-spacing: 1px;
 }
 
+h4 {
+    font-size: 0.95rem;
+    color: #cccccc;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+}
+
+/* ─── Subtitle & Small Text ──────────────────────────────── */
+.subtitle {
+    color: #555;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+}
+
+.small-text {
+    color: #555;
+    font-size: 0.85rem;
+}
+
 /* ─── Links ──────────────────────────────────────────────── */
 a {
     color: #00ff99;
@@ -97,7 +115,7 @@ a:hover {
 }
 
 /* ─── Navbar ─────────────────────────────────────────────── */
-.navbar {
+.header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -106,14 +124,14 @@ a:hover {
     border-bottom: 1px solid #1f1f1f;
 }
 
-.navbar-links a {
+.nav a {
     margin-left: 20px;
     font-size: 0.9rem;
     color: #888;
     transition: color 0.2s ease;
 }
 
-.navbar-links a:hover {
+.nav a:hover {
     color: #00ff99;
 }
 
@@ -173,7 +191,28 @@ button[type="submit"]:hover {
     box-shadow: 0 0 15px rgba(0, 255, 100, 0.4);
 }
 
-/* ─── Error Message ──────────────────────────────────────── */
+/* ─── Generic Button ─────────────────────────────────────── */
+.btn {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 25px;
+    background-color: transparent;
+    color: #00ff99;
+    border: 1px solid #00ff99;
+    border-radius: 6px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #00ff99;
+    color: #0a0a0a;
+    box-shadow: 0 0 12px rgba(0, 255, 100, 0.4);
+}
+
+/* ─── Messages ───────────────────────────────────────────── */
 .error {
     color: #ff4d4d;
     margin-bottom: 15px;
@@ -185,33 +224,39 @@ button[type="submit"]:hover {
     animation: fadeIn 0.3s ease;
 }
 
-/* ─── Table ──────────────────────────────────────────────── */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
-
-th {
-    background-color: #0f0f0f;
+.success {
+    background-color: #001a0d;
+    border-left: 4px solid #00ff99;
     color: #00ff99;
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #2a2a2a;
-    font-size: 0.85rem;
-    letter-spacing: 1px;
-    text-transform: uppercase;
+    padding: 15px 20px;
+    border-radius: 6px;
+    margin: 15px 0;
+    animation: slideIn 0.4s ease;
 }
 
-td {
-    padding: 12px;
-    border-bottom: 1px solid #1a1a1a;
-    font-size: 0.95rem;
-    transition: background-color 0.2s ease;
+/* ─── Alert / Danger Banner ──────────────────────────────── */
+.alert {
+    padding: 20px 25px;
+    border-radius: 8px;
+    margin: 20px 0;
+    animation: slideIn 0.4s ease;
 }
 
-tr:hover td {
-    background-color: #161616;
+.alert-danger {
+    background-color: #1a0000;
+    border-left: 4px solid #ff4d4d;
+    color: #ff4d4d;
+}
+
+.alert-danger h2 {
+    color: #ff4d4d;
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+}
+
+.alert-danger p {
+    color: #cccccc;
+    margin-top: 6px;
 }
 
 /* ─── Badges ─────────────────────────────────────────────── */
@@ -222,21 +267,45 @@ tr:hover td {
     font-size: 0.75rem;
     font-weight: bold;
     letter-spacing: 1px;
-}
-
-.badge-red {
-    background-color: #2a0000;
-    color: #ff4d4d;
-    border: 1px solid #ff4d4d;
-}
-
-.badge-green {
     background-color: #002a12;
     color: #00ff99;
     border: 1px solid #00ff99;
 }
 
-/* ─── Order Card ─────────────────────────────────────────── */
+/* ─── Order List (Dashboard) ─────────────────────────────── */
+.order-list {
+    list-style: none;
+    margin-top: 15px;
+}
+
+.order-list li {
+    padding: 14px 18px;
+    border: 1px solid #1f1f1f;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    transition: all 0.2s ease;
+}
+
+.order-list li:hover {
+    border-color: #00ff99;
+    background-color: #0f0f0f;
+    box-shadow: 0 0 10px rgba(0, 255, 100, 0.06);
+}
+
+.order-list li a {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #cccccc;
+    font-size: 0.95rem;
+}
+
+.order-list li a:hover {
+    color: #00ff99;
+    text-shadow: none;
+}
+
+/* ─── Order Card (Order Page) ────────────────────────────── */
 .order-card {
     background-color: #0f0f0f;
     border: 1px solid #2a2a2a;
@@ -265,59 +334,83 @@ tr:hover td {
     margin-bottom: 3px;
 }
 
-/* ─── Warning Banner ─────────────────────────────────────── */
-.warning {
-    background-color: #1a1500;
-    border-left: 4px solid #ffcc00;
-    color: #ffcc00;
-    padding: 15px 20px;
-    border-radius: 6px;
-    margin: 15px 0;
-    animation: slideIn 0.4s ease;
+/* ─── Explanation Box (Order Page) ──────────────────────── */
+.explanation-box {
+    background-color: #0f0f0f;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    padding: 20px 25px;
+    margin: 20px 0;
 }
 
-/* ─── Danger Banner ──────────────────────────────────────── */
-.danger {
-    background-color: #1a0000;
+.explanation-box.vulnerable {
     border-left: 4px solid #ff4d4d;
-    color: #ff4d4d;
-    padding: 15px 20px;
-    border-radius: 6px;
-    margin: 15px 0;
-    animation: slideIn 0.4s ease;
 }
 
-.danger h2 {
-    color: #ff4d4d;
-    font-size: 1.3rem;
-    margin-bottom: 10px;
-}
-
-/* ─── Success Banner ─────────────────────────────────────── */
-.success {
-    background-color: #001a0d;
+.explanation-box.secure {
     border-left: 4px solid #00ff99;
-    color: #00ff99;
-    padding: 15px 20px;
+}
+
+.explanation-box h3 {
+    margin-bottom: 12px;
+}
+
+.explanation-box p {
+    margin-bottom: 10px;
+    line-height: 1.7;
+    color: #cccccc;
+    font-size: 0.9rem;
+}
+
+/* ─── Settings Card ──────────────────────────────────────── */
+.settings-card {
+    background-color: #0f0f0f;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    padding: 25px;
+    margin: 20px 0;
+}
+
+.settings-card h3 {
+    margin-bottom: 20px;
+}
+
+/* ─── Difficulty Option Buttons ──────────────────────────── */
+.difficulty-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.diff-btn {
+    padding: 12px 20px;
+    background-color: transparent;
+    border: 1px solid #2a2a2a;
     border-radius: 6px;
-    margin: 15px 0;
-    animation: slideIn 0.4s ease;
+    color: #888;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
 }
 
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateX(-10px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
+.diff-btn:hover {
+    border-color: #00ff99;
+    color: #00ff99;
 }
 
-/* ─── Learn Cards ────────────────────────────────────────── */
-.learn-card {
+.diff-btn.active {
+    border-color: #00ff99;
+    color: #00ff99;
+    background-color: #001a0d;
+    box-shadow: 0 0 10px rgba(0, 255, 100, 0.1);
+}
+
+/* ─── Learn Sections ─────────────────────────────────────── */
+.learn-section {
     background-color: #0f0f0f;
     border: 1px solid #2a2a2a;
     border-radius: 8px;
@@ -326,32 +419,58 @@ tr:hover td {
     transition: all 0.3s ease;
 }
 
-.learn-card:hover {
+.learn-section:hover {
     border-color: #00ff99;
     box-shadow: 0 0 12px rgba(0, 255, 100, 0.08);
-    transform: translateY(-2px);
 }
 
-.learn-card p {
+.learn-section p {
     margin-bottom: 8px;
     line-height: 1.7;
     color: #cccccc;
 }
 
-/* ─── Code Block ─────────────────────────────────────────── */
-.code-block {
-    background-color: #080808;
-    border: 1px solid #2a2a2a;
-    border-radius: 6px;
-    padding: 18px;
-    margin-top: 12px;
-    font-family: 'Courier New', monospace;
-    font-size: 0.85rem;
-    color: #00ff99;
+.learn-section ul,
+.learn-section ol {
+    padding-left: 20px;
+    color: #cccccc;
     line-height: 2;
-    overflow-x: auto;
 }
 
+.learn-section li {
+    margin-bottom: 6px;
+}
+
+/* ─── Difficulty Cards (Learn Page) ─────────────────────── */
+.difficulty-card {
+    background-color: #0a0a0a;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    padding: 20px 25px;
+    margin: 15px 0;
+    transition: all 0.3s ease;
+}
+
+.difficulty-card.low {
+    border-left: 4px solid #ff4d4d;
+}
+
+.difficulty-card.medium {
+    border-left: 4px solid #ffcc00;
+}
+
+.difficulty-card.high {
+    border-left: 4px solid #00ff99;
+}
+
+.difficulty-card p {
+    color: #cccccc;
+    line-height: 1.7;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+}
+
+/* ─── Code Blocks ────────────────────────────────────────── */
 code {
     background-color: #0f0f0f;
     color: #00ff99;
@@ -362,11 +481,52 @@ code {
     border: 1px solid #2a2a2a;
 }
 
+pre {
+    background-color: #080808;
+    border: 1px solid #2a2a2a;
+    border-radius: 6px;
+    padding: 18px;
+    margin-top: 12px;
+    overflow-x: auto;
+    line-height: 1.8;
+}
+
+pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 0.85rem;
+    color: #00ff99;
+}
+
 /* ─── Divider ────────────────────────────────────────────── */
 .divider {
     border: none;
     border-top: 1px solid #1f1f1f;
     margin: 25px 0;
+}
+
+/* ─── Footer ─────────────────────────────────────────────── */
+.footer {
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #1f1f1f;
+    color: #444;
+    font-size: 0.8rem;
+}
+
+/* ─── Animations ─────────────────────────────────────────── */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 /* ─── Blinking Cursor ────────────────────────────────────── */
@@ -380,113 +540,4 @@ code {
     50% {
         opacity: 0;
     }
-}
-
-/* ─── Footer ─────────────────────────────────────────────── */
-.footer {
-    text-align: center;
-    margin-top: 30px;
-    padding-top: 20px;
-    border-top: 1px solid #1f1f1f;
-    color: #444;
-    font-size: 0.8rem;
-}
-
-/* ─── Difficulty Cards ───────────────────────────────────── */
-.difficulty-card {
-    background-color: #0f0f0f;
-    border: 1px solid #2a2a2a;
-    border-radius: 8px;
-    padding: 25px;
-    margin: 20px 0;
-    transition: all 0.3s ease;
-}
-
-.difficulty-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
-}
-
-.difficulty-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 12px;
-}
-
-.active-low {
-    border-color: #ff4d4d;
-    box-shadow: 0 0 15px rgba(255, 77, 77, 0.1);
-}
-
-.active-medium {
-    border-color: #ffcc00;
-    box-shadow: 0 0 15px rgba(255, 204, 0, 0.1);
-}
-
-.active-high {
-    border-color: #00ff99;
-    box-shadow: 0 0 15px rgba(0, 255, 100, 0.1);
-}
-
-/* ─── Difficulty Buttons ─────────────────────────────────── */
-.btn-low {
-    padding: 10px 25px;
-    background-color: transparent;
-    color: #ff4d4d;
-    border: 1px solid #ff4d4d;
-    border-radius: 6px;
-    font-family: 'Courier New', monospace;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.btn-low:hover {
-    background-color: #ff4d4d;
-    color: #0a0a0a;
-    box-shadow: 0 0 12px rgba(255, 77, 77, 0.4);
-}
-
-.btn-medium {
-    padding: 10px 25px;
-    background-color: transparent;
-    color: #ffcc00;
-    border: 1px solid #ffcc00;
-    border-radius: 6px;
-    font-family: 'Courier New', monospace;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.btn-medium:hover {
-    background-color: #ffcc00;
-    color: #0a0a0a;
-    box-shadow: 0 0 12px rgba(255, 204, 0, 0.4);
-}
-
-.btn-high {
-    padding: 10px 25px;
-    background-color: transparent;
-    color: #00ff99;
-    border: 1px solid #00ff99;
-    border-radius: 6px;
-    font-family: 'Courier New', monospace;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.btn-high:hover {
-    background-color: #00ff99;
-    color: #0a0a0a;
-    box-shadow: 0 0 12px rgba(0, 255, 100, 0.4);
-}
-
-/* ─── Yellow Badge ───────────────────────────────────────── */
-.badge-yellow {
-    background-color: #2a2000;
-    color: #ffcc00;
-    border: 1px solid #ffcc00;
 }

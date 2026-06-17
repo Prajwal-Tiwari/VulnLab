@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Forbidden | VulnLab</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>VulnLab</h1>
+            <div class="nav">
+                <a href="/dashboard.html">Dashboard</a>
+                <a href="/settings.html">Settings</a>
+                <a href="/learn.html">Learn</a>
+                <a href="/auth/logout">Logout</a>
+            </div>
+        </div>
+
+        <div class="alert alert-danger">
+            <h2>🚫 403 — Forbidden</h2>
+            <p>You don't have permission to access this resource.</p>
+            <p class="subtitle">The server recognized who you are, but you're not authorized to see this.</p>
+        </div>
+
+        <div class="learn-section">
+            <h3>Why did this happen?</h3>
+            <p>
+                You're on <strong>High difficulty</strong>. The server checked the ownership
+                of the order you requested and found it doesn't belong to your account.
+                This is what <strong>proper authorization</strong> looks like in practice.
+            </p>
+            <pre><code>if (order.user_id !== req.session.user_id) {
+  return res.status(403).json({ error: 'Forbidden' });
+}</code></pre>
+        </div>
+
+        <a href="/dashboard.html" class="btn">← Back to Dashboard</a>
+
+        <div class="footer">⚠ For educational purposes only</div>
+    </div>
+</body>
+
+</html>
