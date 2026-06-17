@@ -2,6 +2,25 @@
 
 ---
 
+## v3.0
+
+### Changed
+- Replaced EJS templating engine with plain HTML and the Fetch API
+- All Express routes now return JSON instead of rendered HTML pages
+- Route structure updated to follow REST API conventions — dashboard, orders, and settings now live under /api/
+- Frontend pages handle their own rendering, auth redirects, and error states using fetch() and the DOM
+- isLoggedIn middleware now returns 401 JSON instead of redirecting — redirect logic moved to the frontend
+- Removed EJS as a dependency entirely
+- Removed the views/ folder
+
+### Added
+- Seven standalone HTML pages in public/ replacing the EJS views
+- /auth/me endpoint for frontend pages to check session state
+- Explanation panel on the order page now renders dynamically from API response data
+- Forbidden state handled inline on order.html rather than as a separate redirect
+
+---
+
 ## v2.0
 
 ### Added

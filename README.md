@@ -5,11 +5,13 @@
 ![Security Lab](https://img.shields.io/badge/Web_Security-IDOR_Lab-red)
 ![License](https://img.shields.io/badge/License-MIT-blue)
 
+> Docker Hub: [hub.docker.com/r/prajwaltiwari/vulnlab](https://hub.docker.com/r/prajwaltiwari/vulnlab)
+
 A deliberately vulnerable web application built to learn and understand Insecure Direct Object Reference (IDOR) — one of the most common and impactful web security vulnerabilities found in real-world applications.
 
 > This application is intentionally insecure. Run it only in a local or controlled environment. Never deploy it publicly.
 
-Current Version: **v2.0**
+Current Version: **v3.0**
 
 ---
 
@@ -28,9 +30,9 @@ IDOR happens when a server exposes internal object identifiers — like database
 The vulnerable version:
 ```javascript
 // No ownership check — anyone can access any order
-app.get('/orders/:id', (req, res) => {
-  const order = db.prepare('SELECT * FROM orders WHERE id = ?').get(orderId);
-  res.render('order', { order });
+app.get('/api/orders/:id', (req, res) => {
+  const order = db.prepare('SELECT * FROM orders WHERE id = ?').get(id);
+  res.json({ order });
 });
 ```
 
@@ -38,7 +40,7 @@ The correct version:
 ```javascript
 // Ownership verified before returning data
 if (order.user_id !== req.session.user_id) {
-  return res.status(403).send('Forbidden');
+  return res.status(403).json({ error: 'Forbidden' });
 }
 ```
 
@@ -48,7 +50,7 @@ One missing check. That is all it takes for a full data breach.
 
 ## Difficulty Levels
 
-VulnLab v2.0 adds a structured difficulty system inspired by DVWA.
+VulnLab uses a structured difficulty system inspired by DVWA.
 
 **Low**
 Orders are accessed via plain sequential integer IDs with no ownership check. The most basic form of IDOR — just change the number in the URL and you can access anyone's data.
@@ -164,23 +166,23 @@ The database is pre-seeded with two users:
 **Low difficulty**
 
 1. Login as alice / alice123
-2. Open any order from the dashboard — it loads at `/orders/1`
-3. Change the URL to `/orders/4`
+2. Open any order from the dashboard
+3. Change the ID in the URL to 4, 5, or 6 — those belong to Bob
 4. You are now viewing Bob's order while logged in as Alice
 
 **Medium difficulty**
 
 1. Switch to Medium in Settings
-2. Dashboard links will look like `/orders/MQ==`
+2. Dashboard links will use Base64 encoded IDs
 3. Open your browser console and run `atob('MQ==')` — it returns `1`
 4. Encode Bob's order ID: `btoa('4')` returns `NA==`
-5. Visit `/orders/NA==` — still exposed
+5. Change the ID in the URL to `NA==` — still exposed
 
 **High difficulty**
 
 1. Switch to High in Settings
 2. Dashboard links use UUIDs
-3. Try modifying the UUID in the URL
+3. Try changing the UUID in the URL to one belonging to Bob
 4. Server returns 403 Forbidden
 
 ---
@@ -193,15 +195,14 @@ vulnlab/
 ├── routes/
 │   ├── auth.js            
 │   └── orders.js          
-├── views/
-│   ├── login.ejs
-│   ├── register.ejs
-│   ├── dashboard.ejs
-│   ├── order.ejs
-│   ├── forbidden.ejs
-│   ├── settings.ejs       
-│   └── learn.ejs
 ├── public/
+│   ├── login.html
+│   ├── register.html
+│   ├── dashboard.html
+│   ├── order.html
+│   ├── forbidden.html
+│   ├── settings.html
+│   ├── learn.html
 │   └── style.css
 ├── app.js
 ├── Dockerfile
@@ -218,7 +219,7 @@ vulnlab/
 | Backend | Node.js + Express.js |
 | Database | SQLite via better-sqlite3 |
 | Authentication | express-session |
-| Frontend | EJS + Vanilla CSS |
+| Frontend | Plain HTML + Fetch API |
 | Container | Docker |
 
 ---
@@ -231,6 +232,7 @@ vulnlab/
 - Why obscuring data is not the same as securing it
 - How UUIDs reduce the attack surface
 - How to implement proper object-level authorization
+- How a REST API pattern separates frontend and backend concerns
 
 ---
 
@@ -240,9 +242,10 @@ vulnlab/
 |-------|--------|-------|
 | Stage 1 | Complete | IDOR vulnerability lab |
 | Stage 2 | Complete | Difficulty system |
-| Stage 3 | Planned | XSS vulnerability lab |
-| Stage 4 | Planned | CSRF vulnerability lab |
-| Stage 5 | Planned | API authorization flaws |
+| Stage 3 | Complete | Frontend migration to HTML + Fetch API |
+| Stage 4 | Planned | XSS vulnerability lab |
+| Stage 5 | Planned | CSRF vulnerability lab |
+| Stage 6 | Planned | API authorization flaws |
 
 ---
 
